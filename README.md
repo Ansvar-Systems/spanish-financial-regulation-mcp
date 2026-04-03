@@ -1,42 +1,235 @@
 # Spanish Financial Regulation MCP
 
-MCP server for querying CNMV (Comision Nacional del Mercado de Valores) and Banco de Espana financial regulations: circulares, guias tecnicas, disposiciones normativas, and enforcement actions.
+**Spanish financial regulation data for AI compliance tools.**
 
-## Tool prefix: `es_fin_`
+[![npm version](https://badge.fury.io/js/%40ansvar%2Fspanish-financial-regulation-mcp.svg)](https://www.npmjs.com/package/@ansvar/spanish-financial-regulation-mcp)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![CI](https://github.com/Ansvar-Systems/spanish-financial-regulation-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Ansvar-Systems/spanish-financial-regulation-mcp/actions/workflows/ci.yml)
 
-## Tools
+Query Spanish financial regulation data -- regulations, decisions, and requirements from CNMV/Banco de Espana -- directly from Claude, Cursor, or any MCP-compatible client.
+
+Built by [Ansvar Systems](https://ansvar.eu) -- Stockholm, Sweden
+
+---
+
+## Quick Start
+
+### Use Remotely (No Install Needed)
+
+> Connect directly to the hosted version -- zero dependencies, nothing to install.
+
+**Endpoint:** `https://mcp.ansvar.eu/spanish-financial-regulation/mcp`
+
+| Client | How to Connect |
+|--------|---------------|
+| **Claude.ai** | Settings > Connectors > Add Integration > paste URL |
+| **Claude Code** | `claude mcp add spanish-financial-regulation-mcp --transport http https://mcp.ansvar.eu/spanish-financial-regulation/mcp` |
+| **Claude Desktop** | Add to config (see below) |
+| **GitHub Copilot** | Add to VS Code settings (see below) |
+
+**Claude Desktop** -- add to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "spanish-financial-regulation-mcp": {
+      "type": "url",
+      "url": "https://mcp.ansvar.eu/spanish-financial-regulation/mcp"
+    }
+  }
+}
+```
+
+**GitHub Copilot** -- add to VS Code `settings.json`:
+
+```json
+{
+  "github.copilot.chat.mcp.servers": {
+    "spanish-financial-regulation-mcp": {
+      "type": "http",
+      "url": "https://mcp.ansvar.eu/spanish-financial-regulation/mcp"
+    }
+  }
+}
+```
+
+### Use Locally (npm)
+
+```bash
+npx @ansvar/spanish-financial-regulation-mcp
+```
+
+**Claude Desktop** -- add to `claude_desktop_config.json`:
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "spanish-financial-regulation-mcp": {
+      "command": "npx",
+      "args": ["-y", "@ansvar/spanish-financial-regulation-mcp"]
+    }
+  }
+}
+```
+
+**Cursor / VS Code:**
+
+```json
+{
+  "mcp.servers": {
+    "spanish-financial-regulation-mcp": {
+      "command": "npx",
+      "args": ["-y", "@ansvar/spanish-financial-regulation-mcp"]
+    }
+  }
+}
+```
+
+---
+
+## Available Tools (6)
 
 | Tool | Description |
 |------|-------------|
-| `es_fin_search_regulations` | Full-text search across CNMV and BdE provisions |
-| `es_fin_get_regulation` | Get a specific circular or provision by sourcebook and reference |
-| `es_fin_list_sourcebooks` | List all available sourcebooks |
-| `es_fin_search_enforcement` | Search CNMV and BdE enforcement actions and sanctions |
-| `es_fin_check_currency` | Check whether a provision reference is currently in force |
-| `es_fin_about` | Server metadata and tool list |
+| `es_fin_search_regulations` | Busqueda de texto completo en circulares y disposiciones de la CNMV y el Banco de Espana. Devuelve circulares, guias ... |
+| `es_fin_get_regulation` | Obtener una circular o disposicion especifica por sourcebook y referencia. Acepta referencias como |
+| `es_fin_list_sourcebooks` | Listar todos los sourcebooks disponibles: CNMV Circulares, Guias Tecnicas, Banco de Espana Circulares, y otros organi... |
+| `es_fin_search_enforcement` | Buscar expedientes sancionadores y resoluciones disciplinarias de la CNMV y el Banco de Espana. Devuelve multas, sanc... |
+| `es_fin_check_currency` | Verificar si una referencia normativa especifica esta actualmente en vigor. Devuelve el estado y la fecha de entrada ... |
+| `es_fin_about` | Devolver metadatos sobre este servidor MCP: version, fuente de datos, lista de herramientas. |
 
-## Sourcebooks
+All tools return structured data with source references and timestamps.
 
-| ID | Source |
-|----|--------|
-| `CNMV_CIRCULARES` | CNMV Circulares normativas |
-| `CNMV_GUIAS_TECNICAS` | CNMV Guias Tecnicas |
-| `BDE_CIRCULARES` | Banco de Espana Circulares |
-| `BDE_GUIAS` | Banco de Espana Guias |
-| `DGSFP_RESOLUCIONES` | DGSFP Resoluciones |
+---
 
-## Setup
+## Data Sources and Freshness
+
+All content is sourced from official Spanish regulatory publications:
+
+- **CNMV/Banco de Espana** -- Official regulatory authority
+
+### Data Currency
+
+- Database updates are periodic and may lag official publications
+- Freshness checks run via GitHub Actions workflows
+- Last-updated timestamps in tool responses indicate data age
+
+See `sources.yml` for full provenance metadata.
+
+---
+
+## Security
+
+This project uses multiple layers of automated security scanning:
+
+| Scanner | What It Does | Schedule |
+|---------|-------------|----------|
+| **CodeQL** | Static analysis for security vulnerabilities | Weekly + PRs |
+| **Semgrep** | SAST scanning (OWASP top 10, secrets, TypeScript) | Every push |
+| **Gitleaks** | Secret detection across git history | Every push |
+| **Trivy** | CVE scanning on filesystem and npm dependencies | Daily |
+| **Docker Security** | Container image scanning + SBOM generation | Daily |
+| **Socket.dev** | Supply chain attack detection | PRs |
+| **Dependabot** | Automated dependency updates | Weekly |
+
+See [SECURITY.md](SECURITY.md) for the full policy and vulnerability reporting.
+
+---
+
+## Important Disclaimers
+
+### Not Regulatory Advice
+
+> **THIS TOOL IS NOT REGULATORY OR LEGAL ADVICE**
+>
+> Regulatory data is sourced from official publications by CNMV/Banco de Espana. However:
+> - This is a **research tool**, not a substitute for professional regulatory counsel
+> - **Verify all references** against primary sources before making compliance decisions
+> - **Coverage may be incomplete** -- do not rely solely on this for regulatory research
+
+**Before using professionally, read:** [DISCLAIMER.md](DISCLAIMER.md) | [PRIVACY.md](PRIVACY.md)
+
+### Confidentiality
+
+Queries go through the Claude API. For privileged or confidential matters, use on-premise deployment. See [PRIVACY.md](PRIVACY.md) for details.
+
+---
+
+## Development
+
+### Setup
 
 ```bash
+git clone https://github.com/Ansvar-Systems/spanish-financial-regulation-mcp
+cd spanish-financial-regulation-mcp
 npm install
-npm run seed       # seed sample data
 npm run build
-npm run dev        # HTTP server on port 3000
+npm test
 ```
 
-## Environment variables
+### Running Locally
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `CNMV_DB_PATH` | `data/cnmv.db` | Path to SQLite database |
-| `PORT` | `3000` | HTTP server port |
+```bash
+npm run dev                                       # Start MCP server
+npx @anthropic/mcp-inspector node dist/index.js   # Test with MCP Inspector
+```
+
+### Data Management
+
+```bash
+npm run build:db       # Rebuild SQLite database from seed data
+npm run check-updates  # Check for new regulatory data
+```
+
+---
+
+## Related Projects
+
+This server is part of **Ansvar's MCP fleet** -- 276 MCP servers covering law, regulation, and compliance across 119 jurisdictions.
+
+### Law MCPs
+
+Full national legislation for 108 countries. Example: [@ansvar/swedish-law-mcp](https://github.com/Ansvar-Systems/swedish-law-mcp) -- 2,415 Swedish statutes with EU cross-references.
+
+### Sector Regulator MCPs
+
+National regulatory authority data for 29 EU/EFTA countries across financial regulation, data protection, cybersecurity, and competition. This MCP is one of 116 sector regulator servers.
+
+### Domain MCPs
+
+Specialized compliance domains: [EU Regulations](https://github.com/Ansvar-Systems/EU_compliance_MCP), [Security Frameworks](https://github.com/Ansvar-Systems/security-frameworks-mcp), [Automotive Cybersecurity](https://github.com/Ansvar-Systems/Automotive-MCP), [OT/ICS Security](https://github.com/Ansvar-Systems/ot-security-mcp), [Sanctions](https://github.com/Ansvar-Systems/Sanctions-MCP), and more.
+
+Browse the full fleet at [mcp.ansvar.eu](https://mcp.ansvar.eu).
+
+---
+
+## Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## License
+
+Apache License 2.0. See [LICENSE](./LICENSE) for details.
+
+### Data Licenses
+
+Regulatory data sourced from official government publications. See `sources.yml` for per-source licensing details.
+
+---
+
+## About Ansvar Systems
+
+We build AI-powered compliance and legal research tools for the European market. Our MCP fleet provides structured, verified regulatory data to AI assistants -- so compliance professionals can work with accurate sources instead of guessing.
+
+**[ansvar.eu](https://ansvar.eu)** -- Stockholm, Sweden
+
+---
+
+<p align="center">
+  <sub>Built with care in Stockholm, Sweden</sub>
+</p>
