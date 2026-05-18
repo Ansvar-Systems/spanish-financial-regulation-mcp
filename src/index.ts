@@ -231,11 +231,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
         const _citation = buildCitation(
           `${parsed.sourcebook} ${parsed.reference}`,
-          (provision as unknown as Record<string, unknown>).title as string || `${parsed.sourcebook} ${parsed.reference}`,
+          (provision as unknown as unknown as Record<string, unknown>).title as string || `${parsed.sourcebook} ${parsed.reference}`,
           "es_fin_get_regulation",
           { sourcebook: parsed.sourcebook, reference: parsed.reference },
         );
-        return textContent({ ...(provision as unknown as Record<string, unknown>), _citation });
+        return textContent({ ...(provision as unknown as unknown as Record<string, unknown>), _citation });
       }
 
       case "es_fin_list_sourcebooks": {
